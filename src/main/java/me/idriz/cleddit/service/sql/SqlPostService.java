@@ -55,4 +55,16 @@ public class SqlPostService implements PostService {
 	public Vote getVoteByProfile(Profile profile, Post post) {
 		return voteRepository.findByProfileIdAndPostId(profile.getId(), post.getId());
 	}
+	
+	@Override
+	public Vote updateVote(Profile profile, Post post, boolean positive) {
+		Vote vote = voteRepository.findByProfileIdAndPostId(profile.getId(), post.getId());
+		if (vote != null) {
+			vote.setPositive(positive);
+		} else {
+			vote = new Vote(profile, post, positive);
+		}
+		voteRepository.save(vote);
+		return vote;
+	}
 }

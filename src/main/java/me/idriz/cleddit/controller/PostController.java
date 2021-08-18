@@ -126,6 +126,17 @@ public class PostController {
 		return ResponseEntity.ok().build();
 	}
 	
+	@PostMapping("/vote")
+	public ResponseEntity<?> vote(@RequestBody VoteRequest request) {
+		Profile profile = getAuthenticatedProfile();
+		Post post = postService.getPostById(request.postId());
+		if (post == null) {
+			return ResponseEntity.notFound().build();
+		}
+		Vote updatedVote = postService.updateVote(profile, post, request.positive());
+		return ResponseEntity.ok(new VoteResponse(updatedVote.isPositive()));
+	}
+	
 	record PostListResponse(List<PostResponse> posts) {
 	
 	}
@@ -138,7 +149,11 @@ public class PostController {
 	
 	}
 	
-	record VoteRequest(UUID postId) {
+	record VoteRequest(UUID postId, boolean positive) {
+	
+	}
+	
+	record VoteResponse(boolean positive) {
 	
 	}
 	

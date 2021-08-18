@@ -21,4 +21,5 @@ public interface PostService {
 	
 	Vote getVoteByProfile(Profile profile, Post post);
 	
+	Vote updateVote(Profile profile, Post post, boolean positive);
 }
