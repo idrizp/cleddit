@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -29,7 +30,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http = http.cors().and().csrf().disable();
+		http = http
+				.cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
+				.csrf()
+				.disable();
+		
 		http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
 		http = http
 				.exceptionHandling()
@@ -46,5 +51,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated();
 		
 		http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+		
 	}
 }

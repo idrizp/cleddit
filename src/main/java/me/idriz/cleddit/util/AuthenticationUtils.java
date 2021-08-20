@@ -8,6 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class AuthenticationUtils {
 	
 	public static Profile getAuthenticatedProfile() {
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String) {
+			return null;
+		}
 		return (Profile) SecurityContextHolder
 				.getContext()
 				.getAuthentication()

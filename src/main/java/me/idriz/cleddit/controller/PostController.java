@@ -95,7 +95,10 @@ public class PostController {
 				.map(CommentResponse::new)
 				.collect(Collectors.toList());
 		
-		return ResponseEntity.ok(PostResponse.fromPost(post, null, initialComments));
+		Profile profile = getAuthenticatedProfile();
+		return ResponseEntity.ok(
+				PostResponse.fromPost(post, profile == null ? null : postService.getVoteByProfile(profile, post),
+						initialComments));
 	}
 	
 	@PostMapping("/")

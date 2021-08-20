@@ -7,7 +7,7 @@ import me.idriz.cleddit.model.Vote;
 
 public record PostResponse(
 		UUID postId,
-		boolean vote,
+		Boolean vote,
 		String title,
 		String content,
 		String posterName,
@@ -21,7 +21,7 @@ public record PostResponse(
 	public static PostResponse fromPost(Post post, Vote vote, List<CommentResponse> initialComments) {
 		return new PostResponse(
 				post.getId(),
-				vote != null && vote.isPositive(),
+				vote == null ? null : vote.isPositive(),
 				post.getTitle(),
 				post.getContent(),
 				post.getPoster().getUsername(),
