@@ -43,43 +43,27 @@ public class PostController {
 		if (page < 1) {
 			return ResponseEntity.badRequest().build();
 		}
-		Profile profile = getAuthenticatedProfile();
-		return ResponseEntity.ok(
-				new PostListResponse(
-						postService
-								.getPosts(subcleddit, page - 1)
-								.stream()
-								.map(post -> {
-									Vote vote = null;
-									if (profile != null) {
-										vote = postService.getVoteByProfile(profile, post);
-									}
-									return PostResponse.fromPost(post, vote, null);
-								})
-								.collect(Collectors.toList()))
-		);
-	}
-	
-	@GetMapping("/all/{page}")
-	public ResponseEntity<?> listPostsAll(@PathVariable int page) {
-		if (page < 1) {
-			return ResponseEntity.badRequest().build();
+		
+		// Whether the subcleddit is "all", which is the posts from the entire website
+		boolean isAll = subcleddit.equalsIgnoreCase("all");
+		
+		if (!isAll && subcledditService.findByName(subcleddit) == null) {
+			return ResponseEntity.status(404).build();
 		}
 		
 		Profile profile = getAuthenticatedProfile();
+		List<Post> posts = isAll ? postService.getPosts(page - 1)
+				: postService.getPosts(subcleddit, page - 1);
+		
 		return ResponseEntity.ok(
 				new PostListResponse(
-						postService
-								.getPosts(page - 1)
-								.stream()
-								.map(post -> {
-									Vote vote = null;
-									if (profile != null) {
-										vote = postService.getVoteByProfile(profile, post);
-									}
-									return PostResponse.fromPost(post, vote, null);
-								})
-								.collect(Collectors.toList()))
+						posts.stream().map(post -> {
+							Vote vote = null;
+							if (profile != null) {
+								vote = postService.getVoteByProfile(profile, post);
+							}
+							return PostResponse.fromPost(post, vote, null);
+						}).collect(Collectors.toList()))
 		);
 	}
 	

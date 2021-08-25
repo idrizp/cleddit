@@ -42,6 +42,7 @@ public class SubcledditController {
 	public ResponseEntity<?> deleteSubcleddit(@PathVariable String name) {
 		Profile profile = getAuthenticatedProfile();
 		Subcleddit subcleddit = service.findByName(name.toLowerCase());
+		assert profile != null;
 		if (!subcleddit.getAdministrator().getId().equals(profile.getId())) {
 			return ResponseEntity
 					.status(403)
